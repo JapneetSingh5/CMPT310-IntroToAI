@@ -139,18 +139,16 @@ def uniformCostSearch(problem):
     """Search the node of least total cost first."""
     closed = set()
     fringe = PriorityQueue()
-    parent = {problem.getStartState() : (None, None)} # Node: (Parent, Action)
     finalPath=[]
-    startNode = problem.getStartState()
+    startNode = (problem.getStartState(), 0 , [])
     fringe.push(startNode, 0)
     while(fringe.isEmpty()==False):
         currentState = fringe.pop();
-        topNode = currentState
+        topNode = currentState[0]
+        topNodeCost = currentState[1]
+        topNodeDir = currentState[2]
         if(problem.isGoalState(topNode)):
-            temp = topNode
-            while((temp==problem.getStartState() or temp==None)==False):
-                finalPath = [parent[temp][1]] + finalPath
-                temp = parent[temp][0]
+            finalPath = topNodeDir
             return finalPath
         # print("Top Node is:", topNode)
         # print("Directions to Top Node is:", topNodeDir)
@@ -159,7 +157,7 @@ def uniformCostSearch(problem):
             succList = problem.getSuccessors(topNode)
             for succ in succList:
                 # print("Coordinate: ",succ[0], " Action: ", succ[1], " Cost: " , succ[2], "\n")
-                fringe.update((succ[0], topNodeDir+[succ[1]]))
+                fringe.push((succ[0], topNodeCost+succ[2], topNodeDir+[succ[1]]), topNodeCost+succ[2])
     return finalPath
 
 def nullHeuristic(state, problem=None):
@@ -171,8 +169,28 @@ def nullHeuristic(state, problem=None):
 
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    closed = set()
+    fringe = PriorityQueue()
+    finalPath=[]
+    startNode = (problem.getStartState(), 0 , [])
+    fringe.push(startNode, 0+heuristic(problem.getStartState(), problem))
+    while(fringe.isEmpty()==False):
+        currentState = fringe.pop();
+        topNode = currentState[0]
+        topNodeCost = currentState[1]
+        topNodeDir = currentState[2]
+        if(problem.isGoalState(topNode)):
+            finalPath = topNodeDir
+            return finalPath
+        # print("Top Node is:", topNode)
+        # print("Directions to Top Node is:", topNodeDir)
+        if((topNode in closed)==False):
+            closed.add(topNode)
+            succList = problem.getSuccessors(topNode)
+            for succ in succList:
+                # print("Coordinate: ",succ[0], " Action: ", succ[1], " Cost: " , succ[2], "\n")
+                fringe.push((succ[0], topNodeCost+succ[2], topNodeDir+[succ[1]]), topNodeCost+succ[2]+heuristic(succ[0], problem))
+    return finalPath
 
 
 # Abbreviations
