@@ -473,21 +473,126 @@ def foodHeuristic(state, problem):
     """
     position, foodGrid = state
     import math
-    (x,y) = position
+    x,y = position
     unvisited = foodGrid.asList()
     distance = 0
-    while(len(unvisited)>0):
-        tempDist = math.inf
-        tempIndex = -1
-        for i in range(0, len(unvisited)):
-            if(abs(x-unvisited[i][0]) + abs(y-unvisited[i][1])<tempDist):
-                tempDist = abs(x-unvisited[i][0]) + abs(y-unvisited[i][1])
-                tempIndex = i
-        if(tempIndex!=-1):
-            x = unvisited[tempIndex][0]
-            y = unvisited[tempIndex][1]
-            unvisited.remove(unvisited[tempIndex])
-            distance+=tempDist
+
+    # reached goal, h(goal) is always ZERO
+    if(len(unvisited)==0):
+        return 0
+
+    # Heuristic set as manhattan distance to farthest food point
+    # ==========================================================
+    # RESULT: 9551 expanded nodes
+    # ==========================================================
+    # tempDist = 0
+    # for i in range(0, len(unvisited)):
+    #     if(abs(x-unvisited[i][0]) + abs(y-unvisited[i][1]) > tempDist):
+    #         tempDist = abs(x-unvisited[i][0]) + abs(y-unvisited[i][1])
+    # distance = tempDist
+    # ==========================================================
+
+    # Heuristic set as manhattan distance to closest food point + 
+    # manhattan distance from that point to its farthest food point
+    # ==========================================================
+    # RESULT: 8178 expanded nodes
+    # ==========================================================
+    closestFood = (x,y)
+    tempDist = math.inf
+    for i in range(0, len(unvisited)):
+        if(abs(x-unvisited[i][0]) + abs(y-unvisited[i][1]) < tempDist):
+            tempDist = abs(x-unvisited[i][0]) + abs(y-unvisited[i][1])
+            closestFood = unvisited[i]
+    distance = tempDist
+    tempDist = 0
+    for i in range(0, len(unvisited)):
+        if(abs(closestFood[0]-unvisited[i][0]) + abs(closestFood[1]-unvisited[i][1]) > tempDist):
+            tempDist = abs(closestFood[0]-unvisited[i][0]) + abs(closestFood[1]-unvisited[i][1])
+    distance = distance + tempDist
+    # ==========================================================
+
+    # Heuristic set as euclidean distance to closest food point + 
+    # euclidean distance from that point to its farthest food point
+    # ==========================================================
+    # RESULT: 9231 expanded nodes
+    # ==========================================================
+    # closestFood = (x,y)
+    # tempDist = math.inf
+    # for i in range(0, len(unvisited)):
+    #     if((x-unvisited[i][0])**2 + (y-unvisited[i][1])**2 < tempDist**2):
+    #         tempDist = (abs(x-unvisited[i][0])**2 + abs(y-unvisited[i][1])**2)**(0.5)
+    #         closestFood = unvisited[i]
+    # distance = tempDist
+    # tempDist = 0
+    # for i in range(0, len(unvisited)):
+    #     if((closestFood[0]-unvisited[i][0])**2 + (closestFood[1]-unvisited[i][1])**2 > tempDist**2):
+    #         tempDist = ((closestFood[0]-unvisited[i][0])**2 + (closestFood[1]-unvisited[i][1])**2)**(0.5)    
+    # distance = distance + tempDist
+    # ==========================================================
+
+    # Heuristic set as manhattan distance to closest food point + 
+    # euclidean distance from that point to its farthest food point
+    # ==========================================================
+    # RESULT: 8999 expanded nodes
+    # ==========================================================
+    # closestFood = (x,y)
+    # tempDist = math.inf
+    # for i in range(0, len(unvisited)):
+    #     if(abs(x-unvisited[i][0]) + abs(y-unvisited[i][1]) < tempDist):
+    #         tempDist = abs(x-unvisited[i][0]) + abs(y-unvisited[i][1])
+    #         closestFood = unvisited[i]
+    # distance = tempDist
+    # tempDist = 0
+    # for i in range(0, len(unvisited)):
+    #     if((closestFood[0]-unvisited[i][0])**2 + (closestFood[1]-unvisited[i][1])**2 > tempDist**2):
+    #         tempDist = ((closestFood[0]-unvisited[i][0])**2 + (closestFood[1]-unvisited[i][1])**2)**(0.5)    
+    # distance = distance + tempDist
+    # ==========================================================
+
+    # BFS to find closest food to pacman, 
+    # then manhattan distance to farthest food from that point
+    # ==========================================================
+    # RESULT: 10352 expanded nodes
+    # ==========================================================
+    # from util import Queue
+    # closestFood = (x,y)
+    # tempDist = math.inf
+    # walls = problem.walls
+
+    # closed = set()
+    # fringe = Queue()
+    # finalPath=[]
+    # startNode = ((x,y) , [])
+    # fringe.push(startNode)
+    # while(fringe.isEmpty()==False):
+    #     currentState = fringe.pop();
+    #     topNode = currentState[0]
+    #     topNodeDir = currentState[1]
+    #     if(foodGrid[x][y]):
+    #         distance = len(finalPath)
+    #     if((topNode in closed)==False):
+    #         closed.add(topNode)
+    #         if (x+1)<walls.height:
+    #             if not walls[x+1][y] :
+    #                 fringe.push(((x+1, y), topNodeDir+[1]))
+    #         if (x-1)>=0:
+    #             if not walls[x-1][y] :
+    #                 fringe.push(((x-1, y), topNodeDir+[1]))
+    #         if (y+1)<walls.width:
+    #             if not walls[x][y+1] :
+    #                 fringe.push(((x, y+1), topNodeDir+[1]))
+    #         if (y-1)>=0:
+    #             if not walls[x][y-1] :
+    #                 fringe.push(((x, y-1), topNodeDir+[1]))                           
+    # tempDist = 0
+    # for i in range(0, len(unvisited)):
+    #     if((closestFood[0]-unvisited[i][0])**2 + (closestFood[1]-unvisited[i][1])**2 > tempDist**2):
+    #         tempDist = ((closestFood[0]-unvisited[i][0])**2 + (closestFood[1]-unvisited[i][1])**2)**(0.5)    
+    # distance = distance + tempDist
+    # ==========================================================
+
+
+
     return distance
 
 class ClosestDotSearchAgent(SearchAgent):
