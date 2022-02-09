@@ -18,6 +18,9 @@ Pacman agents (in searchAgents.py).
 """
 
 import util
+from util import Stack
+from util import Queue
+from util import PriorityQueue
 
 class SearchProblem:
     """
@@ -86,18 +89,78 @@ def depthFirstSearch(problem):
     print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
     print("Start's successors:", problem.getSuccessors(problem.getStartState()))
     """
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    closed = set()
+    fringe = Stack()
+    finalPath=[]
+    startNode = (problem.getStartState() , [])
+    fringe.push(startNode)
+    while(fringe.isEmpty()==False):
+        currentState = fringe.pop();
+        topNode = currentState[0]
+        topNodeDir = currentState[1]
+        if(problem.isGoalState(topNode)):
+            finalPath=topNodeDir
+            break
+        # print("Top Node is:", topNode)
+        # print("Directions to Top Node is:", topNodeDir)
+        if((topNode in closed)==False):
+            closed.add(topNode)
+            succList = problem.getSuccessors(topNode)
+            for succ in succList:
+                # print("Coordinate: ",succ[0], " Action: ", succ[1], " Cost: " , succ[2], "\n")
+                fringe.push((succ[0], topNodeDir+[succ[1]]))
+    return finalPath
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    closed = set()
+    fringe = Queue()
+    finalPath=[]
+    startNode = (problem.getStartState() , [])
+    fringe.push(startNode)
+    while(fringe.isEmpty()==False):
+        currentState = fringe.pop();
+        topNode = currentState[0]
+        topNodeDir = currentState[1]
+        if(problem.isGoalState(topNode)):
+            finalPath=topNodeDir
+            break
+        # print("Top Node is:", topNode)
+        # print("Directions to Top Node is:", topNodeDir)
+        if((topNode in closed)==False):
+            closed.add(topNode)
+            succList = problem.getSuccessors(topNode)
+            for succ in succList:
+                # print("Coordinate: ",succ[0], " Action: ", succ[1], " Cost: " , succ[2], "\n")
+                fringe.push((succ[0], topNodeDir+[succ[1]]))
+    return finalPath
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    closed = set()
+    fringe = PriorityQueue()
+    parent = {problem.getStartState() : (None, None)} # Node: (Parent, Action)
+    finalPath=[]
+    startNode = problem.getStartState()
+    fringe.push(startNode, 0)
+    while(fringe.isEmpty()==False):
+        currentState = fringe.pop();
+        topNode = currentState
+        if(problem.isGoalState(topNode)):
+            temp = topNode
+            while((temp==problem.getStartState() or temp==None)==False):
+                finalPath = [parent[temp][1]] + finalPath
+                temp = parent[temp][0]
+            return finalPath
+        # print("Top Node is:", topNode)
+        # print("Directions to Top Node is:", topNodeDir)
+        if((topNode in closed)==False):
+            closed.add(topNode)
+            succList = problem.getSuccessors(topNode)
+            for succ in succList:
+                # print("Coordinate: ",succ[0], " Action: ", succ[1], " Cost: " , succ[2], "\n")
+                fringe.update((succ[0], topNodeDir+[succ[1]]))
+    return finalPath
 
 def nullHeuristic(state, problem=None):
     """
