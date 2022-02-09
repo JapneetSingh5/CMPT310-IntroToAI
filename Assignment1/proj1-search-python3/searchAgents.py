@@ -294,16 +294,16 @@ class CornersProblem(search.SearchProblem):
         Returns the start state (in your state space, not the full Pacman state
         space)
         """
-        "*** YOUR CODE HERE ***"
+        # print((self.startingPosition, self.startingPosition==self.corners[0], self.startingPosition==self.corners[1], self.startingPosition==self.corners[2], self.startingPosition==self.corners[3]))
         # (starting coordinates, if corner2 Done, if corner2 Done, if corner3 Done, if corner4 Done)
         return (self.startingPosition, self.startingPosition==self.corners[0], self.startingPosition==self.corners[1], self.startingPosition==self.corners[2], self.startingPosition==self.corners[3])
 
     def isGoalState(self, state):
+        # print(state, state[0], state[1]==True and state[2]==True and state[3]==True and state[4]==True)
         """
         Returns whether this search state is a goal state of the problem.
         """
-        "*** YOUR CODE HERE ***"
-        return state[1]==state[2] and state[2]==state[3] and state[3]==state[4] and state[4]==True
+        return state[1]==True and state[2]==True and state[3]==True and state[4]==True
 
     def getSuccessors(self, state):
         """
@@ -320,11 +320,11 @@ class CornersProblem(search.SearchProblem):
         for action in [Directions.NORTH, Directions.SOUTH, Directions.EAST, Directions.WEST]:
             # Add a successor state to the successor list if the action is legal
             # Here's a code snippet for figuring out whether a new position hits a wall:
-              ((x,y), c1, c2, c3, c4) = state
+              (x,y), c1, c2, c3, c4 = state
               dx, dy = Actions.directionToVector(action)
               nextx, nexty = int(x + dx), int(y + dy)              
               if not self.walls[nextx][nexty]:
-                  nextState = ((nextx, nexty), self.corners[0]==(x,y) or c1, self.corners[1]==(x,y) or c2, self.corners[2]==(x,y) or c3, self.corners[3]==(x,y) or c4)
+                  nextState = ((nextx, nexty), self.corners[0]==(nextx, nexty) or c1, self.corners[1]==(nextx, nexty) or c2, self.corners[2]==(nextx, nexty) or c3, self.corners[3]==(nextx, nexty) or c4)
                   cost = 1
                   successors.append( (nextState, action, cost))  
         

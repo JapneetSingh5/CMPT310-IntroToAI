@@ -124,7 +124,7 @@ def breadthFirstSearch(problem):
         topNodeDir = currentState[1]
         if(problem.isGoalState(topNode)):
             finalPath=topNodeDir
-            break
+            return finalPath
         # print("Top Node is:", topNode)
         # print("Directions to Top Node is:", topNodeDir)
         if((topNode in closed)==False):
@@ -133,6 +133,8 @@ def breadthFirstSearch(problem):
             for succ in succList:
                 # print("Coordinate: ",succ[0], " Action: ", succ[1], " Cost: " , succ[2], "\n")
                 fringe.push((succ[0], topNodeDir+[succ[1]]))
+    print(finalPath)
+    print(len(finalPath))
     return finalPath
 
 def uniformCostSearch(problem):
