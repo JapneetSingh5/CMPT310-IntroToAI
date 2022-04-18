@@ -16,18 +16,22 @@ X, y = make_classification(
     shuffle=False)
 X_train, X_test, y_train, y_test = train_test_split(X, y, stratify=y, random_state=43)
 
-RFClassifier = RandomForestClassifier(max_depth=10, random_state=0)
+RFClassifier = RandomForestClassifier()
 RFClassifier.fit(X_train, y_train)
 y_test_predicted = RFClassifier.predict(X_test)
 
 feature_importances = RFClassifier.feature_importances_
-print(feature_importances)
+print('Feature Importances: \n')
+for i in range(0, 12):
+    print('Feature '+str(i+1), feature_importances[i])
 
 plt.title('Feature Importance')
 plt.bar(range(X_train.shape[1]), feature_importances, align='center')
-plt.xticks(range(X_train.shape[1]), rotation=90)
+plt.xticks(range(X_train.shape[1]), ['Feature ' + str(i) for i in range(1,X_train.shape[1]+1)], rotation=90)
 plt.tight_layout()
 plt.show()
 
-pscore = metrics.accuracy_score(y_test, y_test_predicted)
-print(pscore)
+accuracy = RFClassifier.score(X_test, y_test)
+print('Accuracy using score function: ', accuracy)
+accuracy2 = metrics.accuracy_score(y_test, y_test_predicted)
+print('Accuracy using accuracy_score function: ', accuracy2)
